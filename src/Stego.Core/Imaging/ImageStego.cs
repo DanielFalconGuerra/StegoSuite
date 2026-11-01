@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using SkiaSharp;
+using Stego.Core.Format;
 
 namespace Stego.Core.Imaging;
 
@@ -39,6 +40,10 @@ public static class ImageStego
 
     public static string RevealText(SKBitmap bitmap, string? password = null) =>
         Encoding.UTF8.GetString(Reveal(bitmap, password));
+
+    /// <inheritdoc cref="StegoEngine.TryReadHeader"/>
+    public static bool TryReadHeader(SKBitmap bitmap, out StegoHeader header) =>
+        StegoEngine.TryReadHeader(ToRgbChannels(bitmap, ReadPixels(bitmap)), out header);
 
     /// <summary>Decodifica una imagen directamente a RGBA de 8 bits sin premultiplicar.</summary>
     public static SKBitmap Load(Stream stream)

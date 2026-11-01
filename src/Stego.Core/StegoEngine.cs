@@ -53,20 +53,27 @@ public static class StegoEngine
         LsbCodec.Embed(carrier[HeaderCarrierBytes..], payload, options.BitsPerChannel);
     }
 
+    /// <summary>
+    /// Lee y valida solo la cabecera, sin extraer ni descifrar el payload.
+    /// </summary>
+    /// <returns>false si el portador no contiene un mensaje válido.</returns>
+    public static bool TryReadHeader(ReadOnlySpan<byte> carrier, out StegoHeader header)
+    {
+        try
+        {
+            header = ReadHeader(carrier);
+            return true;
+        }
+        catch (StegoException)
+        {
+            header = default;
+            return false;
+        }
+    }
+
     public static byte[] Reveal(ReadOnlySpan<byte> carrier, string? password = null)
     {
-        if (carrier.Length < HeaderCarrierBytes)
-            throw new StegoException("El portador es demasiado pequeño para contener una cabecera.");
-
-        Span<byte> headerBytes = stackalloc byte[StegoHeader.Size];
-        LsbCodec.Extract(carrier, headerBytes, StegoHeader.HeaderBitsPerChannel);
-        StegoHeader header = StegoHeader.ReadFrom(headerBytes);
-
-        if (!LsbCodec.IsSupported(header.BitsPerChannel))
-            throw new StegoException($"Cabecera corrupta: bits por canal inválidos ({header.BitsPerChannel}).");
-
-        if (header.PayloadLength > GetCapacity(carrier.Length, header.BitsPerChannel))
-            throw new StegoException("Cabecera corrupta: la longitud declarada excede la capacidad del portador.");
+        StegoHeader header = ReadHeader(carrier);
 
         byte[] payload = new byte[header.PayloadLength];
         LsbCodec.Extract(carrier[HeaderCarrierBytes..], payload, header.BitsPerChannel);
@@ -81,5 +88,23 @@ public static class StegoEngine
             throw new StegoException("El mensaje está cifrado: se requiere contraseña.");
 
         return PayloadCipher.Decrypt(payload, password);
+    }
+
+    private static StegoHeader ReadHeader(ReadOnlySpan<byte> carrier)
+    {
+        if (carrier.Length < HeaderCarrierBytes)
+            throw new StegoException("El portador es demasiado pequeño para contener una cabecera.");
+
+        Span<byte> headerBytes = stackalloc byte[StegoHeader.Size];
+        LsbCodec.Extract(carrier, headerBytes, StegoHeader.HeaderBitsPerChannel);
+        StegoHeader header = StegoHeader.ReadFrom(headerBytes);
+
+        if (!LsbCodec.IsSupported(header.BitsPerChannel))
+            throw new StegoException($"Cabecera corrupta: bits por canal inválidos ({header.BitsPerChannel}).");
+
+        if (header.PayloadLength > GetCapacity(carrier.Length, header.BitsPerChannel))
+            throw new StegoException("Cabecera corrupta: la longitud declarada excede la capacidad del portador.");
+
+        return header;
     }
 }
