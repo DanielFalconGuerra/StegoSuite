@@ -60,3 +60,7 @@ dotnet test
 - [ ] `Stego.Analysis`: chi-cuadrado, análisis RS, planos de bits
 - [ ] Soporte WAV
 - [ ] UI en Blazor
+
+## Licencia
+
+[MIT](LICENSE)
