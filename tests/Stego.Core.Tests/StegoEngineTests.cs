@@ -25,16 +25,16 @@ public class StegoEngineTests
     {
         byte[] carrier = TestData.RandomBytes(2_000, seed: 7);
 
-        StegoEngine.Hide(carrier, Message, new StegoOptions(Password: "s3cr3t"));
+        StegoEngine.Hide(carrier, Message, new StegoOptions(Password: TestData.Password));
 
-        Assert.Equal(Message, StegoEngine.Reveal(carrier, "s3cr3t"));
+        Assert.Equal(Message, StegoEngine.Reveal(carrier, TestData.Password));
     }
 
     [Fact]
     public void Encrypted_message_without_password_throws()
     {
         byte[] carrier = TestData.RandomBytes(2_000, seed: 8);
-        StegoEngine.Hide(carrier, Message, new StegoOptions(Password: "s3cr3t"));
+        StegoEngine.Hide(carrier, Message, new StegoOptions(Password: TestData.Password));
 
         var ex = Assert.Throws<StegoException>(() => StegoEngine.Reveal(carrier));
         Assert.Contains("contraseña", ex.Message);

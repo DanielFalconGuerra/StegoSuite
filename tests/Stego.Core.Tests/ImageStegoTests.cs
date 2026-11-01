@@ -22,11 +22,11 @@ public class ImageStegoTests
     public void Encrypted_message_survives_png_round_trip()
     {
         using var bitmap = TestData.RandomImage(64, 64, seed: 2);
-        ImageStego.Hide(bitmap, Message, new StegoOptions(BitsPerChannel: 2, Password: "clave"));
+        ImageStego.Hide(bitmap, Message, new StegoOptions(BitsPerChannel: 2, Password: TestData.Password));
 
         using var reloaded = PngRoundTrip(bitmap);
 
-        Assert.Equal(Message, ImageStego.RevealText(reloaded, "clave"));
+        Assert.Equal(Message, ImageStego.RevealText(reloaded, TestData.Password));
     }
 
     [Fact]

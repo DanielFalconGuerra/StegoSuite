@@ -5,6 +5,10 @@ namespace Stego.Core.Tests;
 /// <summary>Datos de prueba deterministas (semilla fija) para que los tests sean reproducibles.</summary>
 internal static class TestData
 {
+    // Generadas en tiempo de ejecución: sin literales que los escáneres de secretos confundan con credenciales.
+    public static readonly string Password = Guid.NewGuid().ToString("N");
+    public static readonly string OtherPassword = Guid.NewGuid().ToString("N");
+
     public static byte[] RandomBytes(int length, int seed)
     {
         byte[] bytes = new byte[length];

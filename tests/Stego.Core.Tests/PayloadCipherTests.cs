@@ -10,15 +10,15 @@ public class PayloadCipherTests
     [Fact]
     public void Encrypt_then_Decrypt_returns_original()
     {
-        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, "clave-segura");
+        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, TestData.Password);
 
-        Assert.Equal(Plaintext, PayloadCipher.Decrypt(encrypted, "clave-segura"));
+        Assert.Equal(Plaintext, PayloadCipher.Decrypt(encrypted, TestData.Password));
     }
 
     [Fact]
     public void Encrypted_output_has_expected_overhead()
     {
-        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, "clave");
+        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, TestData.Password);
 
         Assert.Equal(Plaintext.Length + PayloadCipher.Overhead, encrypted.Length);
     }
@@ -26,8 +26,8 @@ public class PayloadCipherTests
     [Fact]
     public void Same_input_produces_different_ciphertexts()
     {
-        byte[] a = PayloadCipher.Encrypt(Plaintext, "clave");
-        byte[] b = PayloadCipher.Encrypt(Plaintext, "clave");
+        byte[] a = PayloadCipher.Encrypt(Plaintext, TestData.Password);
+        byte[] b = PayloadCipher.Encrypt(Plaintext, TestData.Password);
 
         Assert.NotEqual(a, b);
     }
@@ -35,17 +35,17 @@ public class PayloadCipherTests
     [Fact]
     public void Wrong_password_throws()
     {
-        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, "correcta");
+        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, TestData.Password);
 
-        Assert.Throws<StegoException>(() => PayloadCipher.Decrypt(encrypted, "incorrecta"));
+        Assert.Throws<StegoException>(() => PayloadCipher.Decrypt(encrypted, TestData.OtherPassword));
     }
 
     [Fact]
     public void Tampered_ciphertext_throws()
     {
-        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, "clave");
+        byte[] encrypted = PayloadCipher.Encrypt(Plaintext, TestData.Password);
         encrypted[^1] ^= 0x01;
 
-        Assert.Throws<StegoException>(() => PayloadCipher.Decrypt(encrypted, "clave"));
+        Assert.Throws<StegoException>(() => PayloadCipher.Decrypt(encrypted, TestData.Password));
     }
 }
