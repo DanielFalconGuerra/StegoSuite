@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Stego.Cli/Stego.Cli.csproj" />
     <Project Path="src/Stego.Core/Stego.Core.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Stego.Cli.Tests/Stego.Cli.Tests.csproj" />
     <Project Path="tests/Stego.Core.Tests/Stego.Core.Tests.csproj" />
   </Folder>
 </Solution>

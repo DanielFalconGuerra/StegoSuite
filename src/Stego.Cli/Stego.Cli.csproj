@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>stego</AssemblyName>
+    <RootNamespace>Stego.Cli</RootNamespace>
+
+    <!-- Instalable como herramienta global: dotnet tool install -g StegoSuite.Cli -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>stego</ToolCommandName>
+    <PackageId>StegoSuite.Cli</PackageId>
+    <Version>0.1.0</Version>
+    <Description>Oculta y extrae mensajes en imágenes PNG mediante esteganografía LSB con cifrado AES-GCM opcional.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stego.Core\Stego.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.14" />
+  </ItemGroup>
+
+</Project>

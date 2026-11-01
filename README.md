@@ -23,7 +23,26 @@ cabecera (15 B, siempre a 1 bit/canal) ───┤
 | Longitud del payload | 4 |
 | CRC32 del payload | 4 |
 
-## Uso
+## CLI
+
+```bash
+# Ocultar texto (o un archivo con -f) a 2 bits por canal, cifrado
+stego hide -i foto.jpg -o secreto.png -m "Mensaje oculto" -b 2 --encrypt
+
+# Ver capacidad y si hay mensaje (sin pedir contraseña)
+stego info -i secreto.png
+
+# Extraer (la contraseña se pide solo si el mensaje está cifrado)
+stego reveal -i secreto.png
+stego reveal -i secreto.png -o extraido.bin
+```
+
+La contraseña **nunca** se pasa como argumento (quedaría en el historial de la shell): se pide por consola sin mostrarse, o se lee de la variable `STEGO_PASSWORD` en scripts.
+
+Ejecutar desde el código fuente: `dotnet run --project src/Stego.Cli -- info -i foto.png`.
+Instalar como herramienta global: `dotnet pack src/Stego.Cli -o nupkg && dotnet tool install -g StegoSuite.Cli --add-source nupkg`.
+
+## Librería
 
 ```csharp
 using Stego.Core;
@@ -44,7 +63,9 @@ src/Stego.Core/
 ├─ Crypto/PayloadCipher.cs  # AES-GCM + PBKDF2-SHA256 (600k iteraciones)
 ├─ Imaging/ImageStego.cs    # Adaptador SkiaSharp (RGBA sin premultiplicar)
 └─ StegoEngine.cs           # Orquestación independiente del formato
+src/Stego.Cli/              # Comandos hide, reveal, info (System.CommandLine)
 tests/Stego.Core.Tests/     # xUnit
+tests/Stego.Cli.Tests/      # Tests de extremo a extremo de la CLI
 ```
 
 ## Desarrollo
@@ -55,7 +76,7 @@ dotnet test
 
 ## Roadmap
 
-- [ ] `Stego.Cli` con `System.CommandLine`
+- [x] `Stego.Cli` con `System.CommandLine`
 - [ ] Posiciones pseudoaleatorias derivadas de la contraseña
 - [ ] `Stego.Analysis`: chi-cuadrado, análisis RS, planos de bits
 - [ ] Soporte WAV

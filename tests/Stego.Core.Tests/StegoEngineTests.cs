@@ -103,6 +103,24 @@ public class StegoEngineTests
     }
 
     [Fact]
+    public void TryReadHeader_describes_hidden_message_without_password()
+    {
+        byte[] carrier = TestData.RandomBytes(2_000, seed: 14);
+        StegoEngine.Hide(carrier, Message, new StegoOptions(BitsPerChannel: 2, Password: TestData.Password));
+
+        Assert.True(StegoEngine.TryReadHeader(carrier, out StegoHeader header));
+        Assert.True(header.IsEncrypted);
+        Assert.Equal(2, header.BitsPerChannel);
+        Assert.Equal(Message.Length + Crypto.PayloadCipher.Overhead, header.PayloadLength);
+    }
+
+    [Fact]
+    public void TryReadHeader_returns_false_on_clean_carrier()
+    {
+        Assert.False(StegoEngine.TryReadHeader(new byte[2_000], out _));
+    }
+
+    [Fact]
     public void Header_is_always_readable_at_one_bit_per_channel()
     {
         byte[] carrier = TestData.RandomBytes(2_000, seed: 13);
